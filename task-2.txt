@@ -1,0 +1,104 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
+public class ATM_Machine {
+    private static int balance = 1000;
+    private static ArrayList<String> transactionHistory = new ArrayList<>();
+
+    private static void addToTransactionHistory(String transactionType, int amount) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String timestamp = sdf.format(new Date());
+        String transactionRecord = "[" + timestamp + "] " + transactionType + ": $" + amount;
+        transactionHistory.add(transactionRecord);
+    }
+
+    private static void displayTransactionHistory() {
+        System.out.println("\nTransaction History:");
+        for (String transaction : transactionHistory) {
+            System.out.println(transaction);
+        }
+        System.out.println();
+    }
+
+    private static void transferMoney(Scanner sc) {
+        System.out.print("Enter the amount to transfer: ");
+        int transferAmount = sc.nextInt();
+
+        if (balance >= transferAmount) {
+            System.out.print("Enter the target account number: ");
+            int targetAccount = sc.nextInt();
+
+            balance -= transferAmount;
+            addToTransactionHistory("Transfer to Account " + targetAccount, transferAmount);
+            System.out.println("Transfer successful. Remaining balance: $" + balance);
+        } else {
+            System.out.println("Insufficient Balance for the transfer.");
+        }
+        System.out.println("");
+    }
+
+    public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("ATM Machine\n");
+            System.out.println("Choose 1 for Withdraw\n");
+            System.out.println("Choose 2 for Deposit\n");
+            // System.out.println("Choose 3 for Check Balance\n");
+            System.out.println("Choose 3 for Transfer Money\n");
+            System.out.println("Choose 4 for Transaction History\n"); // New option for transaction history
+            System.out.println("Choose 5 for EXIT");
+            System.out.print("Choose the operation:");
+
+            int choice = sc.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter money to be withdrawn:");
+                    int withdraw = sc.nextInt();
+
+                    if (balance >= withdraw) {
+                        balance -= withdraw;
+                        addToTransactionHistory("Withdraw", withdraw);
+                        System.out.println("Please collect your money");
+                    } else {
+                        System.out.println("Insufficient Balance");
+                    }
+                    System.out.println("");
+                    break;
+
+                case 2:
+                    System.out.print("Enter money to be deposited:");
+                    int deposit = sc.nextInt();
+
+                    balance += deposit;
+                    addToTransactionHistory("Deposit", deposit);
+                    System.out.println("Your Money has been successfully deposited");
+                    System.out.println("");
+                    break;
+
+                // case 3:
+                //     System.out.println("Balance: $" + balance);
+                //     System.out.println("");
+                //     break;
+
+                case 3:
+                    transferMoney(sc);
+                    break;
+
+                case 4:
+                    displayTransactionHistory();
+                    break;
+
+                case 5:
+                    System.out.println("Exiting the ATM. Thank you!");
+                    System.exit(0);
+
+                default:
+                    System.out.println("Invalid choice. Please enter a valid option.");
+            }
+        }
+    }
+}
